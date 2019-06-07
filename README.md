@@ -16,6 +16,7 @@
 
 * db: 选择postgresql, 但是为了简单,暂时是用xorm来存取.
 * golang: 本项目用golang开发. 
+* gin: 简单稳定够用即可.
 * wasm: 本项目前端使用golang编译成wasm来替代js.
 * go-vue: https://github.com/norunners/vue 使用这个golang版本的vue来完成基本版面.
 * markdown: 这个应该是博客的核心. 也就是说我们要搞定一个EE扩展版本的markdown编辑器.具体需求暂时还不定.等基本页面完成再说
