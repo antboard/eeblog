@@ -9,3 +9,15 @@
     当然我现在写这个博客的时候,可不是入门者,而是一个极客.
     我想,只要能跟我玩下去,必然很脑洞打开~~
     大家一起来.有机会建个wechat群.
+
+# 设计基调
+
+这个是本项目的指导思想, 估计很多人会不喜欢
+
+* db: 选择postgresql, 但是为了简单,暂时是用xorm来存取.
+* golang: 本项目用golang开发. 
+* gin: 简单稳定够用即可.
+* wasm: 本项目前端使用golang编译成wasm来替代js.
+* go-vue: https://github.com/norunners/vue 使用这个golang版本的vue来完成基本版面.
+* markdown: 这个应该是博客的核心. 也就是说我们要搞定一个EE扩展版本的markdown编辑器.具体需求暂时还不定.等基本页面完成再说
+* svg: 这个是服务markdown的, 很多EE的东西,需要用svg图形展现.
