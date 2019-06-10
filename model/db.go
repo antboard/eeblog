@@ -2,8 +2,8 @@ package model
 
 import (
 	"fmt"
+	"log"
 
-	"code.aliyun.com/icecut/ilibs/icelog"
 	"github.com/go-xorm/xorm"
 )
 
@@ -29,16 +29,16 @@ func GetDBEngine() *xorm.Engine {
 	//格式
 	engine, err := xorm.NewEngine("postgres", psqlInfo)
 	if err != nil {
-		icelog.Fatal(err)
+		log.Fatal(err)
 		return nil
 	}
 	// engine.ShowSQL(true) //菜鸟必备
 	engine.SetSchema(schema)
 	err = engine.Ping()
 	if err != nil {
-		icelog.Fatal(err)
+		log.Fatal(err)
 		return nil
 	}
-	icelog.Info("connect postgresql success")
+	log.Println("connect postgresql success")
 	return engine
 }

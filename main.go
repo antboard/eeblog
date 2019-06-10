@@ -11,7 +11,9 @@ func main() {
 	model.Engine = model.GetDBEngine()
 	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
 	r.Static("/js/", "./web/js/")
+	r.Static("/css/", "./web/css/")
 
 	r.GET("/", handle.Index)
 
