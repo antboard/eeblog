@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/antboard/eeblog/model"
@@ -57,4 +58,20 @@ func Index(c *gin.Context) {
 	// c.HTML(http.StatusOK, "index.tmpl", gin.H{"title": "测试", "project": "EEBLOG", "tags": []gin.H{gin.H{"active": true, "tag": "tag", "URL": "/"}}})
 	// c.JSON(http.StatusOK, vbs)
 	// c.String(http.StatusOK, "...")
+}
+
+// Login ...
+func Login(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.tmpl", nil)
+}
+
+// Plogin ...
+func Plogin(c *gin.Context) {
+	mp := make(map[string]string)
+	err := c.Bind(mp)
+	if err != nil {
+		log.Println(err)
+	}
+	// post 不能重定向. 需要让前端重定向
+	c.JSON(http.StatusOK, gin.H{"url": "/backend/"})
 }

@@ -16,6 +16,8 @@ func main() {
 	r.Static("/css/", "./web/css/")
 
 	r.GET("/", handle.Index)
+	r.GET("/myblog/", handle.Login)
+	r.POST("/myblog/", handle.Plogin)
 
 	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
