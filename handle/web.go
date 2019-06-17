@@ -55,7 +55,7 @@ func Index(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "index.tmpl", mp)
-	// c.HTML(http.StatusOK, "index.tmpl", gin.H{"title": "测试", "project": "EEBLOG", "tags": []gin.H{gin.H{"active": true, "tag": "tag", "URL": "/"}}})
+	// c.HTML(http.StatusOK, "backend.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
 	// c.JSON(http.StatusOK, vbs)
 	// c.String(http.StatusOK, "...")
 }
@@ -74,4 +74,18 @@ func Plogin(c *gin.Context) {
 	}
 	// post 不能重定向. 需要让前端重定向
 	c.JSON(http.StatusOK, gin.H{"url": "/backend/"})
+}
+
+// Backend 后端列表
+func Backend(c *gin.Context) {
+	// 读取文章列表, 显示响应入口
+	// 文章名, 修改, 草稿, 发布
+	c.HTML(http.StatusOK, "backend.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
+}
+
+// NewBlog 创建新文章
+func NewBlog(c *gin.Context) {
+	// 考虑判断参数,如果有uuid,那么就用这个id去索引文章进入编辑页面,如果索引不到,就认为是新blog
+	// 如果没有, 就生成一个uuid,进入新文章页面
+	c.HTML(http.StatusOK, "newblog.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
 }
