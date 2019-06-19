@@ -17,9 +17,13 @@ type Tags struct {
 
 // BlogSummary 博文摘要
 type BlogSummary struct {
-	Title   string
-	Summary string
-	URL     string
+	Title     string
+	Summary   string
+	URL       string
+	Online    bool   // 上线or草稿
+	URLEdit   string // 编辑页面ß
+	URLDraft  string // 草稿状态, 点此变成上线
+	URLOnline string // 上线状态, 点此变成草稿
 }
 
 // MainPage 首页渲染数据
@@ -34,7 +38,7 @@ type MainPage struct {
 
 // Index ...
 func Index(c *gin.Context) {
-	vbs := model.GetResentBlog(0)
+	vbs := model.GetOnlineBlog(0)
 	mp := &MainPage{}
 	mp.Title = "eeblog"
 	mp.Project = "EEBLOG"
@@ -80,7 +84,30 @@ func Plogin(c *gin.Context) {
 func Backend(c *gin.Context) {
 	// 读取文章列表, 显示响应入口
 	// 文章名, 修改, 草稿, 发布
-	c.HTML(http.StatusOK, "backend.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
+	vbs := model.GetResentBlog(0)
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	for _, v := range vbs {
+		blog := new(BlogSummary)
+		blog.Title = v.Title
+		blog.Summary = v.Summary
+		blog.URL = "/eeblog/" + v.ID
+		blog.Online = (v.Status == 1)
+		blog.URLOnline = "/draft/" + v.ID
+		blog.URLDraft = "/online/" + v.ID
+		blog.URLEdit = "/edit/" + v.ID
+		mp.Blogs = append(mp.Blogs, blog)
+	}
+
+	c.HTML(http.StatusOK, "backend.tmpl", mp)
+	// c.HTML(http.StatusOK, "backend.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
 }
 
 // NewBlog 创建新文章
