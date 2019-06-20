@@ -30,3 +30,13 @@ func GetResentBlog(n int) []*Blog {
 	}
 	return vb
 }
+
+// SetBlogStatus 修改博文张婷
+func SetBlogStatus(id string, n int64) {
+	b := &Blog{}
+	b.Status = n
+	_, err := Engine.Cols("status").Where("id=?", id).Update(b)
+	if err != nil {
+		log.Println(err)
+	}
+}

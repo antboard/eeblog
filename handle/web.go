@@ -3,9 +3,11 @@ package handle
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/antboard/eeblog/model"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Tags 顶部标签
@@ -113,6 +115,39 @@ func Backend(c *gin.Context) {
 // NewBlog 创建新文章
 func NewBlog(c *gin.Context) {
 	// 考虑判断参数,如果有uuid,那么就用这个id去索引文章进入编辑页面,如果索引不到,就认为是新blog
-	// 如果没有, 就生成一个uuid,进入新文章页面
-	c.HTML(http.StatusOK, "newblog.tmpl", gin.H{"Title": "测试", "Project": "EEBLOG", "Tags": []gin.H{gin.H{"Active": true, "Tag": "tag", "URL": "/"}}})
+	id := c.Param("id")
+	id = strings.Trim(id, "/")
+	if id == "" {
+		uuidex, _ := uuid.NewV4()
+		URL := `/edit/` + uuidex.String()
+		c.Redirect(http.StatusFound, URL)
+	}
+	c.String(http.StatusOK, "what's wrong??")
+}
+
+// Blog 博文阅读页
+func Blog(c *gin.Context) {
+
+	id := c.Param("id")
+
+	c.String(http.StatusOK, id)
+}
+
+// Draft 设置为草稿
+func Draft(c *gin.Context) {
+	id := c.Param("id")
+	model.SetBlogStatus(id, 0)
+	c.Redirect(http.StatusFound, "/backend/")
+}
+
+// Online 设置为上线
+func Online(c *gin.Context) {
+	id := c.Param("id")
+	model.SetBlogStatus(id, 1)
+	c.Redirect(http.StatusFound, "/backend/")
+}
+
+// Edit 编辑博文
+func Edit(c *gin.Context) {
+	// id := c.Param("id")
 }
