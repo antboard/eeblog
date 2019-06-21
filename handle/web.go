@@ -34,8 +34,9 @@ type MainPage struct {
 	Project    string
 	Tags       []*Tags
 	Bigtitle   string
-	Bitsummary string
+	Bigsummary string
 	Blogs      []*BlogSummary
+	BlogCtx    string // 博文内容
 }
 
 // Index ...
@@ -51,7 +52,7 @@ func Index(c *gin.Context) {
 	tg.URL = "/"
 	mp.Tags = append(mp.Tags, tg)
 	mp.Bigtitle = "Hello EEBLOG"
-	mp.Bitsummary = "这就是一个比较好的电子工程学博客"
+	mp.Bigsummary = "这就是一个比较好的电子工程学博客"
 	for _, v := range vbs {
 		blog := new(BlogSummary)
 		blog.Title = v.Title
@@ -127,10 +128,9 @@ func NewBlog(c *gin.Context) {
 
 // Blog 博文阅读页
 func Blog(c *gin.Context) {
-
 	id := c.Param("id")
-
-	c.String(http.StatusOK, id)
+	blog := model.GetBlog(id)
+	c.String(http.StatusOK, blog.Text)
 }
 
 // Draft 设置为草稿
@@ -149,5 +149,40 @@ func Online(c *gin.Context) {
 
 // Edit 编辑博文
 func Edit(c *gin.Context) {
-	// id := c.Param("id")
+	id := c.Param("id")
+	blog := model.GetBlog(id)
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	mp.Bigtitle = blog.Title
+	mp.Bigsummary = blog.Summary
+	mp.BlogCtx = blog.Text
+	c.HTML(http.StatusOK, "edit.tmpl", mp)
+}
+
+// PEdit 提交编辑的文章
+func PEdit(c *gin.Context) {
+	id := c.Param("id")
+	mp := make(map[string]string)
+	err := c.BindJSON(&mp)
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "")
+		return
+	}
+	log.Println(mp)
+	err = model.UpdateBlog(id, mp["title"], mp["summary"], mp["ctx"])
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "")
+		return
+	}
+	// post 不能重定向. 需要让前端重定向
+	c.JSON(http.StatusOK, gin.H{"url": "/eeblog/" + id})
 }
