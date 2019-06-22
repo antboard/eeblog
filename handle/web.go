@@ -30,13 +30,17 @@ type BlogSummary struct {
 
 // MainPage 首页渲染数据
 type MainPage struct {
-	Title      string
-	Project    string
-	Tags       []*Tags
-	Bigtitle   string
-	Bigsummary string
-	Blogs      []*BlogSummary
-	BlogCtx    string // 博文内容
+	Title   string         // 网页标题
+	Project string         // 网站名称
+	Tags    []*Tags        // 导航标签
+	Blogs   []*BlogSummary // 文集列表
+
+	BigTitle   string // 首页大标题
+	BigSummary string // 首页大摘要
+
+	BlogTitle   string // 博文题目
+	BlogSummary string // 博文摘要
+	BlogCtx     string // 博文内容
 }
 
 // Index ...
@@ -51,8 +55,8 @@ func Index(c *gin.Context) {
 	tg.Tag = "首页"
 	tg.URL = "/"
 	mp.Tags = append(mp.Tags, tg)
-	mp.Bigtitle = "Hello EEBLOG"
-	mp.Bigsummary = "这就是一个比较好的电子工程学博客"
+	mp.BigTitle = "Hello EEBLOG"
+	mp.BigSummary = "这就是一个比较好的电子工程学博客"
 	for _, v := range vbs {
 		blog := new(BlogSummary)
 		blog.Title = v.Title
@@ -139,8 +143,8 @@ func Blog(c *gin.Context) {
 	tg.Tag = "首页"
 	tg.URL = "/"
 	mp.Tags = append(mp.Tags, tg)
-	mp.Bigtitle = blog.Title
-	mp.Bigsummary = blog.Summary
+	mp.BlogTitle = blog.Title
+	mp.BlogSummary = blog.Summary
 	mp.BlogCtx = blog.Text
 	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }
@@ -172,8 +176,8 @@ func Edit(c *gin.Context) {
 	tg.Tag = "首页"
 	tg.URL = "/"
 	mp.Tags = append(mp.Tags, tg)
-	mp.Bigtitle = blog.Title
-	mp.Bigsummary = blog.Summary
+	mp.BigTitle = blog.Title
+	mp.BigSummary = blog.Summary
 	mp.BlogCtx = blog.Text
 	c.HTML(http.StatusOK, "edit.tmpl", mp)
 }
