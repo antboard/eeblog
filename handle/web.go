@@ -30,12 +30,17 @@ type BlogSummary struct {
 
 // MainPage 首页渲染数据
 type MainPage struct {
-	Title      string
-	Project    string
-	Tags       []*Tags
-	Bigtitle   string
-	Bitsummary string
-	Blogs      []*BlogSummary
+	Title   string         // 网页标题
+	Project string         // 网站名称
+	Tags    []*Tags        // 导航标签
+	Blogs   []*BlogSummary // 文集列表
+
+	BigTitle   string // 首页大标题
+	BigSummary string // 首页大摘要
+
+	BlogTitle   string // 博文题目
+	BlogSummary string // 博文摘要
+	BlogCtx     string // 博文内容
 }
 
 // Index ...
@@ -50,8 +55,8 @@ func Index(c *gin.Context) {
 	tg.Tag = "首页"
 	tg.URL = "/"
 	mp.Tags = append(mp.Tags, tg)
-	mp.Bigtitle = "Hello EEBLOG"
-	mp.Bitsummary = "这就是一个比较好的电子工程学博客"
+	mp.BigTitle = "Hello EEBLOG"
+	mp.BigSummary = "这就是一个比较好的电子工程学博客"
 	for _, v := range vbs {
 		blog := new(BlogSummary)
 		blog.Title = v.Title
@@ -127,10 +132,21 @@ func NewBlog(c *gin.Context) {
 
 // Blog 博文阅读页
 func Blog(c *gin.Context) {
-
 	id := c.Param("id")
-
-	c.String(http.StatusOK, id)
+	blog := model.GetBlog(id)
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	mp.BlogTitle = blog.Title
+	mp.BlogSummary = blog.Summary
+	mp.BlogCtx = blog.Text
+	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }
 
 // Draft 设置为草稿
@@ -149,5 +165,40 @@ func Online(c *gin.Context) {
 
 // Edit 编辑博文
 func Edit(c *gin.Context) {
-	// id := c.Param("id")
+	id := c.Param("id")
+	blog := model.GetBlog(id)
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	mp.BigTitle = blog.Title
+	mp.BigSummary = blog.Summary
+	mp.BlogCtx = blog.Text
+	c.HTML(http.StatusOK, "edit.tmpl", mp)
+}
+
+// PEdit 提交编辑的文章
+func PEdit(c *gin.Context) {
+	id := c.Param("id")
+	mp := make(map[string]string)
+	err := c.BindJSON(&mp)
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "")
+		return
+	}
+	// log.Println(mp)
+	err = model.UpdateBlog(id, mp["title"], mp["summary"], mp["ctx"])
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "")
+		return
+	}
+	// post 不能重定向. 需要让前端重定向
+	c.JSON(http.StatusOK, gin.H{"url": "/eeblog/" + id})
 }

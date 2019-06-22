@@ -59,32 +59,23 @@
         </div>
       </nav>
     </header>
-    <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-sm-12">
-            <div class="jumbotron">
-              <h1>{{.BigTitle}}</h1>
-              <p>{{.BigSummary}}</p>
-            </div>
-            <div class="row">
-              {{ range .Blogs }}
-              <div class="col-xs-12 col-lg-4 col-sm-4">
-                <h2>{{.Title}}</h2>
-                <p>{{.Summary}}</p>
-                <p><a class="btn btn-default" href="{{.URL}}" role="button">more »</a></p>
-              </div><!--/.col-xs-12.col-lg-4 col-sm-9 -->
-              {{ end }}
-            </div><!--/row-->
-          </div><!--/.col-xs-12.col-sm-9-->
-        </div><!--/row-->    
-      </div>
-      
+    <div class="container-fluid">
+      <div role="main" class="col-md-12 ml-sm-auto col-lg-12 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+        <div class="alert alert-primary" role="alert">
+          <h2>{{.BlogTitle}}</h2>
+        </div>
+        <div class="alert alert-success" role="alert">
+        <h5 class="alert-heading">{{.BlogSummary}}</h5>
+        </div>
+        <div class="alert alert-info" role="alert">
+        {{.BlogCtx}}
+        </div>
+        
+        </div>
+      </div><!--/.container-->
       <footer class="container">
-        <a href="https://github.com/antboard/eeblog">© power by eeblog 2019</a>
+          <a href="https://github.com/antboard/eeblog">© power by eeblog 2019</a>
       </footer>
-
-    </div><!--/.container-->
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -94,6 +85,4 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-  
-
 </body></html>

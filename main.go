@@ -27,6 +27,7 @@ func main() {
 	r.GET("/draft/:id", handle.Draft)   // 状态草稿
 	r.GET("/online/:id", handle.Online) // 状态上线
 	r.GET("/edit/:id", handle.Edit)     // 编辑博文
+	r.POST("/edit/:id", handle.PEdit)   // 编辑博文
 
 	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
