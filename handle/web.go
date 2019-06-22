@@ -192,7 +192,7 @@ func PEdit(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "")
 		return
 	}
-	log.Println(mp)
+	// log.Println(mp)
 	err = model.UpdateBlog(id, mp["title"], mp["summary"], mp["ctx"])
 	if err != nil {
 		log.Println(err)

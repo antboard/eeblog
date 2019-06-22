@@ -10,7 +10,7 @@
     <title>{{.Title}}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
@@ -30,38 +30,38 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-fixed-top navbar-inverse">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">{{.Project}}</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            {{ range .Tags }}
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">{{.Project}}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        {{ range .Tags }}
               {{ if .Active }}
-                 <li class="active"><a href="{{.URL}}">{{.Tag}}</a></li>
+                 <li class="nav-item active">
+                    <a class="nav-link" href="{{.URL}}">{{.Tag}}<span class="sr-only">(current)</span></a>
+                </li>
               {{else}}
-                <a href="{{.URL}}">{{.Tag}}</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{.URL}}">{{.Tag}}</a>
+                </li>
               {{ end }}
             {{ end }}
-           
-            
-          </ul>
-        </div><!-- /.nav-collapse -->
-      </div><!-- /.container -->
-    </nav><!-- /.navbar -->
-
+      </ul>
+      <!--
+      <form class="form-inline" style="margin-bottom: 0;">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      -->
+    </div>
+  </nav>
+</header>
     <div class="container">
-
-      <div class="row row-offcanvas row-offcanvas-right">
-
-        <div class="col-xs-12 col-sm-9">
+        <div class="row">
+                <div class="col-xs-12 col-sm-12">
           <div class="jumbotron">
             <h1>{{.BigTitle}}</h1>
             <p>{{.BigSummary}}</p>
@@ -76,11 +76,12 @@
             {{ end }}
           </div><!--/row-->
         </div><!--/.col-xs-12.col-sm-9-->
-      </div><!--/row-->
+      </div><!--/row-->    
+  </div>
+      
+      
 
-      <hr>
-
-      <footer>
+      <footer class="container">
         <a href="https://github.com/antboard/eeblog">© power by eeblog 2019</a>
       </footer>
 
@@ -90,12 +91,11 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="offcanvas.js"></script>
   
 
 </body></html>
