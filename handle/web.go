@@ -130,7 +130,19 @@ func NewBlog(c *gin.Context) {
 func Blog(c *gin.Context) {
 	id := c.Param("id")
 	blog := model.GetBlog(id)
-	c.String(http.StatusOK, blog.Text)
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	mp.Bigtitle = blog.Title
+	mp.Bigsummary = blog.Summary
+	mp.BlogCtx = blog.Text
+	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }
 
 // Draft 设置为草稿
