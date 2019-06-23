@@ -55,7 +55,8 @@
       $.ajax({
         type: "POST",
         url: "/myblog/",
-        data: params,
+        data: JSON.stringify(params),
+        contentType: "application/json; charset=utf-8",
         dataType : "json",
         success: function(respMsg){
           window.location.href=respMsg.url;
