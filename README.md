@@ -22,3 +22,10 @@
 * markdown: 这个应该是博客的核心. 也就是说我们要搞定一个EE扩展版本的markdown编辑器.具体需求暂时还不定.等基本页面完成再说
 * svg: 这个是服务markdown的, 很多EE的东西,需要用svg图形展现.
 * [临时] 初期为了更快的展现,暂时使用jq和bootstrap来展现.第二阶段切换到wasm中去
+
+# 测试用例
+
+请到docker网站查看测试用部署:
+https://hub.docker.com/r/icecut/eeblog
+
+线上测试版本,等markdown功能添加完成后开放.
