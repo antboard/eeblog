@@ -3,13 +3,11 @@ package model
 import (
 	"log"
 	"time"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 // Blog 存放博客文章
 type Blog struct {
-	ID      string `xorm:"id uuid"`
+	ID      string `xorm:"id uuid pk"`
 	Title   string `xorm:"VARCHAR(64)"`
 	Summary string `xorm:"VARCHAR(120)"`
 	Text    string `xorm:"text"`
@@ -69,8 +67,7 @@ func UpdateBlog(id, title, summary, ctx string) error {
 		return err
 	}
 	if i == 0 {
-		uuidex, _ := uuid.NewV4()
-		b.ID = uuidex.String()
+		b.ID = id
 		b.Status = 1
 		b.Summary = summary
 		b.Title = title
