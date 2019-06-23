@@ -5,6 +5,9 @@ services:
     environment:
       PASSWORD: example
       NAME: eeblog@example
+      DBHOST: pgsql
+      DBUSER: postgres
+      DBPASSWORD: example
     ports:
     - "8080:8080"
     links:

@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/spf13/viper"
+
 	"github.com/go-xorm/xorm"
 )
 
 var (
 	//TODO: 这些值后面改成从环境变量中获取
-	host     = "pgsql"
-	port     = 5432
-	user     = "postgres"
-	password = "example"
-	dbName   = "eeblog"
-	schema   = "public"
+	port   = 5432
+	dbName = "eeblog"
+	schema = "public"
 )
 
 // Engine db
@@ -22,6 +21,9 @@ var Engine *xorm.Engine
 
 // GetDBEngine 获取...
 func GetDBEngine() *xorm.Engine {
+	host := viper.Get("dbhost")
+	user := viper.Get("dbuser")
+	password := viper.Get("dbpassword")
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbName)
 	if password != "" {
 		psqlInfo = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)

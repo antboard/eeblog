@@ -13,6 +13,9 @@ import (
 func main() {
 	viper.BindEnv("name")
 	viper.BindEnv("password")
+	viper.BindEnv("dbhost")
+	viper.BindEnv("dbuser")
+	viper.BindEnv("dbpassword")
 	log.SetFlags(log.Lshortfile)
 	model.Engine = model.GetDBEngine()
 	err := model.Engine.Sync2(new(model.Blog))
