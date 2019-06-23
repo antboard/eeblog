@@ -7,11 +7,19 @@ import (
 	"github.com/antboard/eeblog/model"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 )
 
 func main() {
+	viper.BindEnv("name")
+	viper.BindEnv("password")
 	log.SetFlags(log.Lshortfile)
 	model.Engine = model.GetDBEngine()
+	err := model.Engine.Sync2(new(model.Blog))
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")

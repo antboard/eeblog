@@ -9,7 +9,7 @@ import (
 
 var (
 	//TODO: 这些值后面改成从环境变量中获取
-	host     = "localhost"
+	host     = "pgsql"
 	port     = 5432
 	user     = "postgres"
 	password = "example"

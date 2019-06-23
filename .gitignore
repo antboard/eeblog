@@ -11,3 +11,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 *.wasm
+deploy/localtime
+deploy/eeblog
+deploy/templates/*.tmpl
