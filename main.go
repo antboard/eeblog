@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Llongfile)
 	md := goldmark.New(
 		goldmark.WithExtensions(mdex.SchExt),
 		// goldmark.WithParserOptions(
@@ -24,13 +25,14 @@ func main() {
 		// 	html.WithXHTML(),
 		// ),
 	)
-	src := `$$$ test
+	src := `$ U10-P8-NSTC12[1:VCC,8:GND](1,2) 22
 	test
-	$$$`
+	$`
 	var buf bytes.Buffer
 	if err := md.Convert([]byte(src), &buf); err != nil {
 		panic(err)
 	}
+	log.Println(buf.String())
 	viper.BindEnv("name")
 	viper.BindEnv("password")
 	viper.BindEnv("dbhost")

@@ -14,3 +14,6 @@
 deploy/localtime
 deploy/eeblog
 deploy/templates/*.tmpl
+deploy/web/*.html
+deploy/web/css/*.css
+deploy/web/js/*.js

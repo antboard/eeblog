@@ -37,8 +37,9 @@ func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context)
 	}
 
 	node := last.NewSchBlock()
-	node.AddLine(string(line))
-	reader.Advance(segment.Len() - 1)
+	remain := node.AddLine(string(line))
+	// log.Printf("%#v", node)
+	reader.Advance(segment.Len() - remain)
 	return node, parser.NoChildren
 }
 
@@ -48,12 +49,14 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 	if util.IsBlank(line) {
 		return parser.Continue | parser.NoChildren
 	}
-	pos, padding := util.IndentPosition(line, reader.LineOffset(), 4)
+	// 如果 是结束符就返回close
+	if line[0] == "$"
 	if pos < 0 {
 		return parser.Close
 	}
-	reader.AdvanceAndSetPadding(pos, padding)
-	_, segment = reader.PeekLine()
+	// reader.AdvanceAndSetPadding(pos, padding)
+	// _, segment = reader.PeekLine()
+	log.Printf("%#v", string(line))
 	// node.Lines().Append(segment)
 	reader.Advance(segment.Len() - 1)
 	return parser.Continue | parser.NoChildren

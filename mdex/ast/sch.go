@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -42,12 +43,14 @@ func (n *SchBlock) Kind() gast.NodeKind {
 }
 
 // AddLine 添加一个行描述符
-func (n *SchBlock) AddLine(desc string) {
+func (n *SchBlock) AddLine(desc string) int {
+	log.Println(desc)
 	// 拆出芯片编号
 	ux := regexp.MustCompile(`U([0-9]+)-`)
 	u := ux.FindStringSubmatch(desc)
 	if len(u) > 1 {
 		n.ICIndex = u[1]
+		// log.Println(n.ICIndex, u[1])
 		desc = desc[len(u[0]):]
 	}
 	//拆出引脚数量
@@ -84,9 +87,10 @@ func (n *SchBlock) AddLine(desc string) {
 		n.Y, _ = strconv.Atoi(lsl[2])
 		desc = desc[len(lsl[0]):]
 	}
+	return len(desc)
 }
 
 // NewSchBlock 解析出一个新芯片
 func NewSchBlock() *SchBlock {
-	return &SchBlock{}
+	return &SchBlock{PinNames: make(map[string]string)}
 }
