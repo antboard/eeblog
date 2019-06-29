@@ -1,10 +1,13 @@
 package mdex
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/renderer"
+	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/util"
 
 	last "github.com/antboard/eeblog/mdex/ast"
@@ -27,14 +30,14 @@ func NewSchParser() parser.BlockParser {
 func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context) (ast.Node, parser.State) {
 	log.Println("1")
 	line, segment := reader.PeekLine()
-	pos, padding := util.IndentPosition(line, reader.LineOffset(), 4)
-	if pos < 0 {
+	// 判断$前缀标记
+	pos := pc.BlockOffset()
+	if line[pos] != '$' {
 		return nil, parser.NoChildren
 	}
+
 	node := last.NewSchBlock()
-	reader.AdvanceAndSetPadding(pos, padding)
-	_, segment = reader.PeekLine()
-	// node.Lines().Append(segment)
+	node.AddLine(string(line))
 	reader.Advance(segment.Len() - 1)
 	return node, parser.NoChildren
 }
@@ -70,6 +73,37 @@ func (b *schParser) CanAcceptIndentedLine() bool {
 	return false
 }
 
+// SchHTMLRenderer 渲染器
+type SchHTMLRenderer struct {
+	html.Config
+}
+
+// NewSchHTMLRenderer sch渲染器
+func NewSchHTMLRenderer(opts ...html.Option) renderer.NodeRenderer {
+	r := &SchHTMLRenderer{
+		Config: html.NewConfig(),
+	}
+	for _, opt := range opts {
+		opt.SetHTMLOption(&r.Config)
+	}
+	return r
+}
+
+// RegisterFuncs 注册渲染函数
+func (s *SchHTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(last.KindSchBlock, s.renderSchBlock)
+}
+
+func (s *SchHTMLRenderer) renderSchBlock(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	n := node.(*last.SchBlock)
+	b, _ := json.Marshal(n)
+	w.WriteString(string(b))
+	return ast.WalkContinue, nil
+}
+
 type schExt struct {
 }
 
@@ -80,8 +114,8 @@ func (e *schExt) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(parser.WithBlockParsers(
 		util.Prioritized(NewSchParser(), 0),
 	))
-	// m.Renderer().AddOptions(renderer.WithNodeRenderers(
-	// 	util.Prioritized(NewTaskCheckBoxHTMLRenderer(), 500),
-	// ))
+	m.Renderer().AddOptions(renderer.WithNodeRenderers(
+		util.Prioritized(NewSchHTMLRenderer(), 500),
+	))
 
 }
