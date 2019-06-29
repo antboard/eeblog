@@ -1,38 +1,18 @@
 package main
 
 import (
-	"bytes"
 	"log"
 
 	"github.com/antboard/eeblog/handle"
-	"github.com/antboard/eeblog/mdex"
+	_ "github.com/antboard/eeblog/mdex"
 	"github.com/antboard/eeblog/model"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
-	"github.com/yuin/goldmark"
 )
 
 func main() {
 	log.SetFlags(log.Llongfile)
-	md := goldmark.New(
-		goldmark.WithExtensions(mdex.SchExt),
-		// goldmark.WithParserOptions(
-		// 	parser.WithAutoHeadingID(),
-		// ),
-		// goldmark.WithRendererOptions(
-		// 	html.WithHardWraps(),
-		// 	html.WithXHTML(),
-		// ),
-	)
-	src := `$ U10-P8-NSTC12[1:VCC,8:GND](1,2) 22
-	test
-	$`
-	var buf bytes.Buffer
-	if err := md.Convert([]byte(src), &buf); err != nil {
-		panic(err)
-	}
-	log.Println(buf.String())
 	viper.BindEnv("name")
 	viper.BindEnv("password")
 	viper.BindEnv("dbhost")

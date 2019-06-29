@@ -53,10 +53,15 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 	if line[0] == '$' {
 		return parser.Close
 	}
-	// reader.AdvanceAndSetPadding(pos, padding)
-	// _, segment = reader.PeekLine()
+	cur, ok := node.(*last.SchBlock)
+	if !ok {
+		log.Println("no node")
+		log.Printf("%#v\n", node)
+		return parser.Close
+	}
+
 	log.Printf("%#v", string(line))
-	// node.Lines().Append(segment)
+	cur.AddLine(string(line))
 	reader.Advance(segment.Len() - 1)
 	return parser.Continue | parser.NoChildren
 }
