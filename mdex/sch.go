@@ -50,8 +50,7 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 		return parser.Continue | parser.NoChildren
 	}
 	// 如果 是结束符就返回close
-	if line[0] == "$"
-	if pos < 0 {
+	if line[0] == '$' {
 		return parser.Close
 	}
 	// reader.AdvanceAndSetPadding(pos, padding)
