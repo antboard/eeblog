@@ -1,6 +1,8 @@
 package handle
 
 import (
+	"bytes"
+	"html/template"
 	"log"
 	"net/http"
 	"strings"
@@ -8,6 +10,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/spf13/viper"
 
+	"github.com/antboard/eeblog/mdex"
 	"github.com/antboard/eeblog/model"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -41,9 +44,9 @@ type MainPage struct {
 	BigTitle   string // 首页大标题
 	BigSummary string // 首页大摘要
 
-	BlogTitle   string // 博文题目
-	BlogSummary string // 博文摘要
-	BlogCtx     string // 博文内容
+	BlogTitle   string        // 博文题目
+	BlogSummary string        // 博文摘要
+	BlogCtx     template.HTML // 博文内容
 }
 
 var store *sessions.CookieStore
@@ -180,7 +183,7 @@ func Blog(c *gin.Context) {
 	mp.Tags = append(mp.Tags, tg)
 	mp.BlogTitle = blog.Title
 	mp.BlogSummary = blog.Summary
-	mp.BlogCtx = blog.Text
+	mp.BlogCtx = template.HTML(blog.Text)
 	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }
 
@@ -213,7 +216,7 @@ func Edit(c *gin.Context) {
 	mp.Tags = append(mp.Tags, tg)
 	mp.BigTitle = blog.Title
 	mp.BigSummary = blog.Summary
-	mp.BlogCtx = blog.Text
+	mp.BlogCtx = template.HTML(blog.Text)
 	c.HTML(http.StatusOK, "edit.tmpl", mp)
 }
 
@@ -236,4 +239,30 @@ func PEdit(c *gin.Context) {
 	}
 	// post 不能重定向. 需要让前端重定向
 	c.JSON(http.StatusOK, gin.H{"url": "/eeblog/" + id})
+}
+
+func DumyBlog(c *gin.Context) {
+	src := `$ 
+	U10-P8-NSTC12[1:VCC,8:GND](3,2)
+	U11-P4-NEEPROM[1:VCC,4:GND](10,12)
+	$`
+	var buf bytes.Buffer
+	if err := mdex.MD.Convert([]byte(src), &buf); err != nil {
+		panic(err)
+	}
+	log.Println(buf.String())
+
+	mp := &MainPage{}
+	mp.Title = "eeblog"
+	mp.Project = "EEBLOG"
+	mp.Tags = make([]*Tags, 0, 10)
+	tg := new(Tags)
+	tg.Active = true
+	tg.Tag = "首页"
+	tg.URL = "/"
+	mp.Tags = append(mp.Tags, tg)
+	mp.BlogTitle = "blog.Title"
+	mp.BlogSummary = "blog.Summary"
+	mp.BlogCtx = template.HTML(buf.String())
+	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }

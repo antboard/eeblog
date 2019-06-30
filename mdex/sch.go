@@ -1,7 +1,6 @@
 package mdex
 
 import (
-	"encoding/json"
 	"log"
 
 	"github.com/yuin/goldmark"
@@ -60,7 +59,7 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 		return parser.Close
 	}
 
-	log.Printf("%#v", string(line))
+	// log.Printf("%#v", string(line))
 	cur.AddLine(string(line))
 	reader.Advance(segment.Len() - 1)
 	return parser.Continue | parser.NoChildren
@@ -106,8 +105,9 @@ func (s *SchHTMLRenderer) renderSchBlock(w util.BufWriter, source []byte, node a
 		return ast.WalkContinue, nil
 	}
 	n := node.(*last.SchBlock)
-	b, _ := json.Marshal(n)
-	w.WriteString(string(b))
+	n.ToSvg(w)
+	// b, _ := json.Marshal(n)
+	// w.WriteString(string(b))
 	return ast.WalkContinue, nil
 }
 
