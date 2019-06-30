@@ -3,6 +3,7 @@ package ast
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -53,7 +54,7 @@ func (n *SchBlock) Kind() gast.NodeKind {
 
 // AddLine 添加一个行描述符
 func (n *SchBlock) AddLine(desc string) int {
-	// log.Println(desc)
+	log.Println(desc)
 	// 读取画布大小
 	pageszre := regexp.MustCompile(`\$\(([0-9]+),([0-9]+)\)`)
 	pagesz := pageszre.FindStringSubmatch(desc)

@@ -183,7 +183,15 @@ func Blog(c *gin.Context) {
 	mp.Tags = append(mp.Tags, tg)
 	mp.BlogTitle = blog.Title
 	mp.BlogSummary = blog.Summary
-	mp.BlogCtx = template.HTML(blog.Text)
+	log.Println(blog.Text)
+	var buf bytes.Buffer
+	if err := mdex.MD.Convert([]byte(blog.Text), &buf); err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "markdown err")
+		return
+	}
+
+	mp.BlogCtx = template.HTML(buf.String())
 	c.HTML(http.StatusOK, "blog.tmpl", mp)
 }
 
@@ -243,10 +251,14 @@ func PEdit(c *gin.Context) {
 
 // DumyBlog 测试markdown接口
 func DumyBlog(c *gin.Context) {
-	src := `$(80,50)
-	U10-P8-NSTC12[1:VCC,8:GND(ddd)](3,2,8)
-	U11-P4-NEEPROM[1:VCC,4:GND](10,12,5)
-	$`
+	src := `#大题目
+
+	小段落
+
+$(80,50)
+U10-P8-NSTC12[1:VCC,8:GND(ddd)](3,2,8)
+U11-P4-NEEPROM[1:VCC,4:GND](10,12,5)
+$`
 	var buf bytes.Buffer
 	if err := mdex.MD.Convert([]byte(src), &buf); err != nil {
 		panic(err)
