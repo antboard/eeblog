@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/antboard/eeblog/handle"
+	_ "github.com/antboard/eeblog/mdex"
 	"github.com/antboard/eeblog/model"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -11,6 +12,7 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Llongfile)
 	viper.BindEnv("name")
 	viper.BindEnv("password")
 	viper.BindEnv("dbhost")
@@ -23,7 +25,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	// gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/js/", "./web/js/")
@@ -39,6 +41,8 @@ func main() {
 	r.GET("/online/:id", handle.Online) // 状态上线
 	r.GET("/edit/:id", handle.Edit)     // 编辑博文
 	r.POST("/edit/:id", handle.PEdit)   // 编辑博文
+
+	r.GET("/dumy", handle.DumyBlog)
 
 	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
 }
