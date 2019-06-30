@@ -241,16 +241,17 @@ func PEdit(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"url": "/eeblog/" + id})
 }
 
+// DumyBlog 测试markdown接口
 func DumyBlog(c *gin.Context) {
-	src := `$ 
-	U10-P8-NSTC12[1:VCC,8:GND](3,2)
-	U11-P4-NEEPROM[1:VCC,4:GND](10,12)
+	src := `$(80,50)
+	U10-P8-NSTC12[1:VCC,8:GND(ddd)](3,2,8)
+	U11-P4-NEEPROM[1:VCC,4:GND](10,12,5)
 	$`
 	var buf bytes.Buffer
 	if err := mdex.MD.Convert([]byte(src), &buf); err != nil {
 		panic(err)
 	}
-	log.Println(buf.String())
+	// log.Println(buf.String())
 
 	mp := &MainPage{}
 	mp.Title = "eeblog"

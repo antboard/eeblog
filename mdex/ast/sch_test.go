@@ -2,6 +2,7 @@ package ast
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -54,4 +55,16 @@ func TestU(t *testing.T) {
 	}
 
 	t.Error(desc)
+}
+
+func TestPage(t *testing.T) {
+	desc := `$(80,50)`
+	pageszre := regexp.MustCompile(`\$\(([0-9]+),([0-9]+)\)`)
+	pagesz := pageszre.FindStringSubmatch(desc)
+	t.Error(pagesz)
+	if len(pagesz) == 3 {
+		PageW, _ := strconv.Atoi(pagesz[1])
+		PageH, _ := strconv.Atoi(pagesz[2])
+		t.Error(PageW, PageH)
+	}
 }

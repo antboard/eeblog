@@ -3,7 +3,6 @@ package ast
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -16,6 +15,8 @@ import (
 * 第一步先渲染一个芯片
 * $ U10-P8-NSTC12[1:VCC,8:GND] $
  */
+
+// ICBlock 芯片描述
 type ICBlock struct {
 	ICIndex  string //U10
 	ICPins   int    //P8
@@ -23,12 +24,15 @@ type ICBlock struct {
 	PinNames map[string]string
 	Y        int
 	X        int
+	W        int
 }
 
 // SchBlock 原理图
 type SchBlock struct {
 	gast.BaseBlock
-	Ics []*ICBlock
+	Ics   []*ICBlock
+	PageW int
+	PageH int
 }
 
 // Dump 继承
@@ -49,7 +53,15 @@ func (n *SchBlock) Kind() gast.NodeKind {
 
 // AddLine 添加一个行描述符
 func (n *SchBlock) AddLine(desc string) int {
-	log.Println(desc)
+	// log.Println(desc)
+	// 读取画布大小
+	pageszre := regexp.MustCompile(`\$\(([0-9]+),([0-9]+)\)`)
+	pagesz := pageszre.FindStringSubmatch(desc)
+	if len(pagesz) == 3 {
+		n.PageW, _ = strconv.Atoi(pagesz[1])
+		n.PageH, _ = strconv.Atoi(pagesz[2])
+		return 0
+	}
 	// 拆出芯片编号->成功则添加一颗芯片
 	ux := regexp.MustCompile(`U([0-9]+)-`)
 	u := ux.FindStringSubmatch(desc)
@@ -88,11 +100,12 @@ func (n *SchBlock) AddLine(desc string) int {
 			}
 		}
 		// 拆出位置信息
-		lc := regexp.MustCompile(`\(([0-9]+),([0-9]+)\)`)
+		lc := regexp.MustCompile(`\(([0-9]+),([0-9]+),([0-9]+)\)`)
 		lsl := lc.FindStringSubmatch(desc)
-		if len(lsl) >= 3 {
+		if len(lsl) > 3 {
 			icb.X, _ = strconv.Atoi(lsl[1])
 			icb.Y, _ = strconv.Atoi(lsl[2])
+			icb.W, _ = strconv.Atoi(lsl[3])
 			desc = desc[len(lsl[0]):]
 		}
 	}
@@ -103,8 +116,8 @@ func (n *SchBlock) AddLine(desc string) int {
 // ToSvg 输出svg
 func (n *SchBlock) ToSvg(w io.Writer) {
 	div := 12
-	width := 500
-	height := 500
+	width := n.PageW * div
+	height := n.PageH * div
 	canvas := svg.New(w)
 	canvas.Start(width, height)
 	canvas.Rect(0, 0, width, height, "fill:#e0e0e2;")
@@ -119,20 +132,39 @@ func (n *SchBlock) ToSvg(w io.Writer) {
 	}
 
 	for _, v := range n.Ics {
+		// 画中间框
+		canvas.Rect(v.X*div, v.Y*div, v.W*div, v.ICPins*div/2+1*div, "fill:#cdcdcf;stroke:#737375;stroke-width:1pt;")
+
 		// 芯片编号
 		canvas.Text(v.X*div, v.Y*div-div/2, "U"+v.ICIndex)
 		// 画芯片引脚,先用左右方式
 		// 左侧
 		for i := 0; i < v.ICPins/2; i++ {
+			// 引脚编号
+			strpin := strconv.Itoa(i + 1)
+			canvas.Text((v.X-2)*div, (v.Y+1+i)*div, strpin, "font-size:"+strconv.Itoa(div)+"px;")
+			// 引脚名称
+			name, ok := v.PinNames[strpin]
+			if ok {
+				canvas.Text((v.X)*div+2, (v.Y+1+i)*div+div/3, name, "font-size:"+strconv.Itoa(div)+"px;")
+			}
+			// 引脚线
 			canvas.Line(v.X*div, (v.Y+1+i)*div, (v.X-2)*div, (v.Y+1+i)*div, "stroke:#737375;")
 		}
 		// 右侧
 		for i := 0; i < v.ICPins/2; i++ {
-			canvas.Line(v.X*div+10*div, (v.Y+1+i)*div, (v.X+12)*div, (v.Y+1+i)*div, "stroke:#737375;")
+			// U型编号
+			strpin := strconv.Itoa(v.ICPins - i)
+			canvas.Text((v.X+v.W+1)*div, (v.Y+1+i)*div, strpin, "font-size:"+strconv.Itoa(div)+"px;")
+			// 引脚名称
+			name, ok := v.PinNames[strpin]
+			if ok {
+				canvas.Text((v.X+v.W)*div, (v.Y+1+i)*div+div/3, name, "font-size:"+strconv.Itoa(div)+"px;text-anchor: end")
+			}
+			// 引脚线
+			canvas.Line(v.X*div+v.W*div, (v.Y+1+i)*div, (v.X+v.W+2)*div, (v.Y+1+i)*div, "stroke:#737375;")
 		}
 
-		// 画中间框
-		canvas.Rect(v.X*div, v.Y*div, 10*div, v.ICPins*div/2+1*div, "fill:#cdcdcf;stroke:#737375;stroke-width:1pt;")
 		// 芯片名称
 		canvas.Text(v.X*div, v.Y*div+v.ICPins*div/2+2*div, v.ICName, "font-size:"+strconv.Itoa(div)+"px;")
 
@@ -144,5 +176,5 @@ func (n *SchBlock) ToSvg(w io.Writer) {
 
 // NewSchBlock 解析出一个新芯片
 func NewSchBlock() *SchBlock {
-	return &SchBlock{}
+	return &SchBlock{PageW: 50, PageH: 50}
 }

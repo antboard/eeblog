@@ -27,8 +27,8 @@ func NewSchParser() parser.BlockParser {
 }
 
 func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context) (ast.Node, parser.State) {
-	log.Println("1")
-	line, segment := reader.PeekLine()
+	// log.Println("1")
+	line, _ := reader.PeekLine()
 	// 判断$前缀标记
 	pos := pc.BlockOffset()
 	if line[pos] != '$' {
@@ -36,14 +36,14 @@ func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context)
 	}
 
 	node := last.NewSchBlock()
-	remain := node.AddLine(string(line))
-	// log.Printf("%#v", node)
-	reader.Advance(segment.Len() - remain)
+	node.AddLine(string(line))
+	// log.Println(segment.Len(), remain)
+	// reader.Advance(segment.Len() - remain)
 	return node, parser.NoChildren
 }
 
 func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Context) parser.State {
-	log.Println("2")
+	// log.Println("2")
 	line, segment := reader.PeekLine()
 	if util.IsBlank(line) {
 		return parser.Continue | parser.NoChildren
@@ -66,7 +66,7 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 }
 
 func (b *schParser) Close(node ast.Node, reader text.Reader, pc parser.Context) {
-	log.Println("close")
+	// log.Println("close")
 }
 
 func (b *schParser) CanInterruptParagraph() bool {

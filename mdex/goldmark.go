@@ -17,9 +17,10 @@ var MD = goldmark.New(
 )
 
 func init() {
-	// src := `$
-	// U10-P8-NSTC12[1:VCC,8:GND](1,2)
-	// U11-P4-NEEPROM[1:VCC,4:GND](10,12)
+	// log.SetFlags(log.Llongfile)
+	// src := `$(30,20)
+	// U10-P8-NSTC12[1:VCC,8:GND](1,2,3)
+	// U11-P4-NEEPROM[1:VCC,4:GND](10,12,3)
 	// $`
 	// var buf bytes.Buffer
 	// if err := MD.Convert([]byte(src), &buf); err != nil {
