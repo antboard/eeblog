@@ -15,7 +15,7 @@ func init() {
 
 /*
 * 第一步先渲染一个芯片
-* $ U10-P8-NSTC12[1:VCC,8:GND] $
+* $ U10-P8-NSTC12[1:VCC,8:GND](3,2,8) $
  */
 
 // ICBlock 芯片描述

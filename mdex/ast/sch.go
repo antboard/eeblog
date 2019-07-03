@@ -90,7 +90,6 @@ func (n *SchBlock) ToSvg(w io.Writer) {
 		v.ToSvg(canvas, w)
 	}
 
-	// canvas.Text(width/2, height/2, "Hello, SVG", "text-anchor:middle;font-size:30px;fill:white")
 	canvas.End()
 }
 
