@@ -68,7 +68,7 @@ func (rb *RBlock) ParseLine(desc string) SvgBlock {
 
 // ToSvg 生成svg
 func (rb *RBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
-	log.Printf("%#v\n", rb)
+	// log.Printf("%#v\n", rb)
 	// 暂时不用旋转,直接画
 	if rb.Layout == "H" {
 		// 1号腿
