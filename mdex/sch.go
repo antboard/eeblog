@@ -36,7 +36,7 @@ func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context)
 	}
 
 	node := last.NewSchBlock()
-	node.AddLine(string(line))
+	node.InitByLine(string(line))
 	// log.Println(segment.Len(), remain)
 	// reader.Advance(segment.Len() - remain)
 	return node, parser.NoChildren
