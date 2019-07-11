@@ -16,4 +16,6 @@ type Lineparser interface {
 // SvgBlock 用来生成svg图
 type SvgBlock interface {
 	ToSvg(canvas *svg.SVG, w io.Writer)
+	GetName() string           // 获得块的名字
+	GetPin(idx int) (int, int) // 获得引脚的位置
 }

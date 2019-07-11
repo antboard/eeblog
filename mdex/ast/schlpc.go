@@ -108,3 +108,19 @@ func (cb *CBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 
 	}
 }
+
+// GetName 获取元件名
+func (cb *CBlock) GetName() string {
+	return "C" + cb.Index
+}
+
+// GetPin 获取引脚位置
+func (cb *CBlock) GetPin(i int) (x int, y int) {
+	if i == 1 {
+		return cb.X, cb.Y
+	}
+	if cb.Layout == "H" {
+		return cb.X + div*3, cb.Y
+	}
+	return cb.X, cb.Y + div*3
+}
