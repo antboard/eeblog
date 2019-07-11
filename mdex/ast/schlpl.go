@@ -100,3 +100,19 @@ func (lb *LBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 
 	}
 }
+
+// GetName 获取元件名
+func (lb *LBlock) GetName() string {
+	return "L" + lb.Index
+}
+
+// GetPin 获取引脚位置
+func (lb *LBlock) GetPin(i int) (x int, y int) {
+	if i == 1 {
+		return lb.X, lb.Y
+	}
+	if lb.Layout == "H" {
+		return lb.X + div*3, lb.Y
+	}
+	return lb.X, lb.Y + div*3
+}

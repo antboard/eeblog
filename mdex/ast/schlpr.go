@@ -95,3 +95,19 @@ func (rb *RBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 
 	}
 }
+
+// GetName 获取元件名
+func (rb *RBlock) GetName() string {
+	return "R" + rb.Index
+}
+
+// GetPin 获取引脚位置
+func (rb *RBlock) GetPin(i int) (x int, y int) {
+	if i == 1 {
+		return rb.X, rb.Y
+	}
+	if rb.Layout == "H" {
+		return rb.X + div*3, rb.Y
+	}
+	return rb.X, rb.Y + div*3
+}
