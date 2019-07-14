@@ -30,7 +30,7 @@ type LBlock struct {
 // CanParse 类型检查
 func (lb *LBlock) CanParse(desc string) bool {
 	// 如果有Ln出现就是电阻
-	lx := regexp.MustCompile(`L([0-9]+)-`)
+	lx := regexp.MustCompile(`^[\s]*L([0-9]+)-`)
 	l := lx.FindStringSubmatch(desc)
 	if len(l) > 1 {
 		log.Println("parse L success ", desc)
@@ -40,7 +40,7 @@ func (lb *LBlock) CanParse(desc string) bool {
 }
 
 // ParseLine 解析块
-func (lb *LBlock) ParseLine(desc string) SvgBlock {
+func (lb *LBlock) ParseLine(b *SchBlock, desc string) SvgBlock {
 	lx := regexp.MustCompile(`L([0-9]+)-`)
 	l := lx.FindStringSubmatch(desc)
 	if len(l) > 1 {
@@ -101,8 +101,8 @@ func (lb *LBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 	}
 }
 
-// GetName 获取元件名
-func (lb *LBlock) GetName() string {
+// GetIdxName 获取元件名
+func (lb *LBlock) GetIdxName() string {
 	return "L" + lb.Index
 }
 
@@ -112,7 +112,7 @@ func (lb *LBlock) GetPin(i int) (x int, y int) {
 		return lb.X, lb.Y
 	}
 	if lb.Layout == "H" {
-		return lb.X + div*3, lb.Y
+		return lb.X + 5, lb.Y
 	}
-	return lb.X, lb.Y + div*3
+	return lb.X, lb.Y + 5
 }

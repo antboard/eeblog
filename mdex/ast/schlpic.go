@@ -2,6 +2,7 @@ package ast
 
 import (
 	"io"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -35,7 +36,7 @@ type ICBlock struct {
 
 // CanParse 可解析判断
 func (ic *ICBlock) CanParse(desc string) bool {
-	ux := regexp.MustCompile(`U([0-9]+)-`)
+	ux := regexp.MustCompile(`^[\s]*U([0-9]+)-`)
 	u := ux.FindStringSubmatch(desc)
 	if len(u) > 1 {
 		return true
@@ -44,7 +45,7 @@ func (ic *ICBlock) CanParse(desc string) bool {
 }
 
 // ParseLine 根据行解析出目标块
-func (ic *ICBlock) ParseLine(desc string) SvgBlock {
+func (ic *ICBlock) ParseLine(b *SchBlock, desc string) SvgBlock {
 	ux := regexp.MustCompile(`U([0-9]+)-`)
 	u := ux.FindStringSubmatch(desc)
 	if len(u) > 1 {
@@ -90,9 +91,27 @@ func (ic *ICBlock) ParseLine(desc string) SvgBlock {
 			icb.W, _ = strconv.Atoi(lsl[3])
 			desc = desc[len(lsl[0]):]
 		}
+		icb.initPinLc()
 		return icb
 	}
 	return nil
+}
+
+func (ic *ICBlock) initPinLc() {
+	for i := 0; i < ic.Pins/2; i++ {
+		pt := &point{
+			X: (ic.X - 2),
+			Y: (ic.Y + 1 + i),
+		}
+		ic.PinLc[i] = pt
+	}
+	for i := 0; i < ic.Pins/2; i++ {
+		pt := &point{
+			X: (ic.X + ic.W + 2),
+			Y: (ic.Y + 1 + i),
+		}
+		ic.PinLc[ic.Pins-i-1] = pt
+	}
 }
 
 // ToSvg 转成图形
@@ -115,11 +134,6 @@ func (ic *ICBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 		}
 		// 引脚线
 		canvas.Line(ic.X*div, (ic.Y+1+i)*div, (ic.X-2)*div, (ic.Y+1+i)*div, "stroke:#737375;")
-		pt := &point{
-			X: (ic.X - 2) * div,
-			Y: (ic.Y + 1 + i) * div,
-		}
-		ic.PinLc[i] = pt
 	}
 	// 右侧
 	for i := 0; i < ic.Pins/2; i++ {
@@ -133,11 +147,6 @@ func (ic *ICBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 		}
 		// 引脚线
 		canvas.Line(ic.X*div+ic.W*div, (ic.Y+1+i)*div, (ic.X+ic.W+2)*div, (ic.Y+1+i)*div, "stroke:#737375;")
-		pt := &point{
-			X: (ic.X + ic.W + 2) * div,
-			Y: (ic.Y + 1 + i) * div,
-		}
-		ic.PinLc[ic.Pins-i-1] = pt
 	}
 
 	// 芯片名称
@@ -145,12 +154,17 @@ func (ic *ICBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 
 }
 
-// GetName 获取元件编号
-func (ic *ICBlock) GetName() string {
+// GetIdxName 获取元件编号
+func (ic *ICBlock) GetIdxName() string {
 	return "U" + ic.Index
 }
 
 // GetPin 获取引脚位置
 func (ic *ICBlock) GetPin(i int) (x int, y int) {
+	log.Printf("%#v\n", ic)
+	if len(ic.PinLc) < i {
+		return 0, 0
+	}
+	log.Printf("%#v\n", ic.PinLc[i-1])
 	return ic.PinLc[i-1].X, ic.PinLc[i-1].Y
 }

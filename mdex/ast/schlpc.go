@@ -32,7 +32,7 @@ type CBlock struct {
 // CanParse 类型检查
 func (cb *CBlock) CanParse(desc string) bool {
 	// 如果有Cn出现就是电阻
-	cx := regexp.MustCompile(`C([0-9]+)-`)
+	cx := regexp.MustCompile(`^[\s]*C([0-9]+)-`)
 	c := cx.FindStringSubmatch(desc)
 	if len(c) > 1 {
 		log.Println("parse C success ", desc)
@@ -42,7 +42,7 @@ func (cb *CBlock) CanParse(desc string) bool {
 }
 
 // ParseLine 解析块
-func (cb *CBlock) ParseLine(desc string) SvgBlock {
+func (cb *CBlock) ParseLine(b *SchBlock, desc string) SvgBlock {
 	cx := regexp.MustCompile(`C([0-9]+)-`)
 	c := cx.FindStringSubmatch(desc)
 	if len(c) > 1 {
@@ -109,8 +109,8 @@ func (cb *CBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 	}
 }
 
-// GetName 获取元件名
-func (cb *CBlock) GetName() string {
+// GetIdxName 获取元件名
+func (cb *CBlock) GetIdxName() string {
 	return "C" + cb.Index
 }
 
@@ -120,7 +120,7 @@ func (cb *CBlock) GetPin(i int) (x int, y int) {
 		return cb.X, cb.Y
 	}
 	if cb.Layout == "H" {
-		return cb.X + div*3, cb.Y
+		return cb.X + 3, cb.Y
 	}
-	return cb.X, cb.Y + div*3
+	return cb.X, cb.Y + 3
 }
