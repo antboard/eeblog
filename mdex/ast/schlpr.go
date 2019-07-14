@@ -30,7 +30,7 @@ type RBlock struct {
 // CanParse 类型检查
 func (rb *RBlock) CanParse(desc string) bool {
 	// 如果有Rn出现就是电阻
-	rx := regexp.MustCompile(`R([0-9]+)-`)
+	rx := regexp.MustCompile(`^[\s]*R([0-9]+)-`)
 	r := rx.FindStringSubmatch(desc)
 	if len(r) > 1 {
 		log.Println("parse R success ", desc)
@@ -41,7 +41,7 @@ func (rb *RBlock) CanParse(desc string) bool {
 }
 
 // ParseLine 解析块
-func (rb *RBlock) ParseLine(desc string) SvgBlock {
+func (rb *RBlock) ParseLine(b *SchBlock, desc string) SvgBlock {
 	rx := regexp.MustCompile(`R([0-9]+)-`)
 	r := rx.FindStringSubmatch(desc)
 	if len(r) > 1 {
@@ -96,8 +96,8 @@ func (rb *RBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 	}
 }
 
-// GetName 获取元件名
-func (rb *RBlock) GetName() string {
+// GetIdxName 获取元件名
+func (rb *RBlock) GetIdxName() string {
 	return "R" + rb.Index
 }
 
@@ -107,7 +107,7 @@ func (rb *RBlock) GetPin(i int) (x int, y int) {
 		return rb.X, rb.Y
 	}
 	if rb.Layout == "H" {
-		return rb.X + div*3, rb.Y
+		return rb.X + 5, rb.Y
 	}
-	return rb.X, rb.Y + div*3
+	return rb.X, rb.Y + 5
 }

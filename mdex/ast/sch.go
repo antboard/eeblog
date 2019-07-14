@@ -54,16 +54,27 @@ func (n *SchBlock) InitByLine(desc string) {
 	}
 }
 
+// GetIcByIndex 根据名字找到ic
+func (n *SchBlock) GetIcByIndex(idx string) SvgBlock {
+	for _, ic := range n.Ics {
+		if ic.GetIdxName() == idx {
+			return ic
+		}
+	}
+	return new(DumySvgBlock)
+}
+
 // AddLine 添加一个行描述符
 func (n *SchBlock) AddLine(desc string) int {
 	log.Println(desc)
 
 	for _, v := range schParsers {
 		if v.CanParse(desc) {
-			lp := v.ParseLine(desc)
+			lp := v.ParseLine(n, desc)
 			if lp != nil {
 				n.Ics = append(n.Ics, lp)
 			}
+			break
 		}
 	}
 	return len(desc)

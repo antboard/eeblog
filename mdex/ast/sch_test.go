@@ -68,3 +68,16 @@ func TestPage(t *testing.T) {
 		t.Error(PageW, PageH)
 	}
 }
+
+func TestNet(t *testing.T) {
+	// n := &NetBlock{}
+	// ok := n.CanParse("NU4-")
+	// t.Error(ok)
+
+	// nx := regexp.MustCompile(`^[\s]*N([a-zA-z0-9]+)\.?([0-9]+)?`)
+	// n := nx.FindStringSubmatch(`   NU0.3`)
+	// t.Error(n, len(n))
+	nx := regexp.MustCompile(`([\+\-/\*])\(([0-9]+)?,([0-9]+)?\)`)
+	n := nx.FindStringSubmatch("+(15,)")
+	t.Error(n)
+}
