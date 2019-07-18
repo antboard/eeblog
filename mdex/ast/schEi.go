@@ -53,12 +53,13 @@ func (ud *UserDefine) CanParse(desc string) bool {
 // ParseLine 解析块
 func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 	// Ei35-
-	eix := regexp.MustCompile(`Ei([0-9]+)-`)
+	eix := regexp.MustCompile(`^[\s]*Ei([0-9]+)-`)
 	ei := eix.FindStringSubmatch(desc)
 	if len(ei) > 1 {
 		cur := new(UserDefine)
 		cur.Index = ei[1]
 		desc = desc[len(ei[0]):]
+		fmt.Println(desc)
 		// Point[(1,1);(1,5);(5,1);(5,5)]-
 		if strings.HasPrefix(desc, "Point[") {
 			pos := strings.Index(desc, "]")
@@ -138,6 +139,10 @@ func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 
 // ToSvg 生成svg
 func (ud *UserDefine) ToSvg(canvas *svg.SVG, w io.Writer) {
+}
+
+// LayoutSvg 生成svg
+func (ud *UserDefine) LayoutSvg(canvas *svg.SVG, w io.Writer, offsetX, offsetY int) {
 }
 
 // GetIdxName 获取元件名
