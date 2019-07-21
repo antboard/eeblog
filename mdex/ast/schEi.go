@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"regexp"
@@ -40,13 +39,13 @@ type pinCfg struct {
 
 // UserDefine 自定义模块
 type UserDefine struct {
-	Index   string
-	Points  []*point
-	Cir     *cir
-	Lines   []*line
-	Pins    []*pinCfg
-	Texts   []string
-	PinNums []int
+	Index  string
+	Points []*point
+	Cir    *cir
+	Lines  []*line
+	Pins   []*pinCfg
+	Lable  point // 原件索引显示位置
+	Value  point // 原件数值显示位置
 }
 
 // CanParse 类型检查
@@ -62,19 +61,21 @@ func (ud *UserDefine) CanParse(desc string) bool {
 
 // ParseLine 解析块
 func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
+	cur := new(UserDefine)
 	// Ei35-
 	eix := regexp.MustCompile(`^[\s]*Ei([0-9]+)-`)
 	ei := eix.FindStringSubmatch(desc)
 	if len(ei) > 1 {
-		cur := new(UserDefine)
 		cur.Index = ei[1]
 		desc = desc[len(ei[0]):]
-		fmt.Println(desc)
-		// Point[(1,1);(1,5);(5,1);(5,5)]-
-		if strings.HasPrefix(desc, "Point[") {
+	}
+	for {
+		desc = strings.TrimPrefix(desc, "-")
+		// log.Println(desc)
+		// Point[(1,1);(1,5);(5,1);(5,5)]
+		if strings.HasPrefix(desc, "Points[") {
 			pos := strings.Index(desc, "]")
 			ptsStr := desc[len("Point["):pos]
-			fmt.Println(ptsStr)
 			pts := strings.Split(ptsStr, ";")
 			for _, ptstr := range pts {
 				ptx := regexp.MustCompile(`\(([0-9]+),([0-9]+)\)`)
@@ -86,13 +87,13 @@ func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 					cur.Points = append(cur.Points, pt)
 				}
 			}
-			desc = desc[pos+2:]
+			desc = desc[pos+1:]
+			continue
 		}
 		// Line[(0,1)-(1,1);(0,2)-(1,2);(0,5)-(1,5)]-
-		if strings.HasPrefix(desc, "Line[") {
+		if strings.HasPrefix(desc, "Lines[") {
 			pos := strings.Index(desc, "]")
 			linesstr := desc[len("Line["):pos]
-			log.Println(linesstr)
 			lines := strings.Split(linesstr, ";")
 			for _, linestr := range lines {
 				linex := regexp.MustCompile(`\(([0-9]+),([0-9]+)\)-\(([0-9]+),([0-9]+)\)`)
@@ -110,10 +111,11 @@ func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 					cur.Lines = append(cur.Lines, line)
 				}
 			}
-			desc = desc[pos+2:]
+			desc = desc[pos+1:]
+			continue
 		}
-		//Cir(3,3,1,1)-
-		cirx := regexp.MustCompile(`^Cir\(([0-9]+),([0-9]+),([0-9]+),([0-9]+)\)-`)
+		//Cir(3,3,1)- 暂时支持圆.预留椭圆
+		cirx := regexp.MustCompile(`^Cir\(([0-9]+),([0-9]+),([0-9]+),([0-9]*)\)`)
 		cirs := cirx.FindStringSubmatch(desc)
 		if len(cirs) > 1 {
 			c := new(cir)
@@ -123,15 +125,13 @@ func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 			// c.ry, _ = strconv.Atoi(cirs[4])
 			cur.Cir = c
 			desc = desc[len(cirs[0]):]
+			continue
 		}
 		//Pin[(0,1,+1,12,vcc);(0,2,+1,13,gnd)]
-		log.Println(desc)
 		if strings.HasPrefix(desc, "Pins[") {
 			pos := strings.Index(desc, "]")
 			pinStr := desc[len("Pins["):pos]
-			fmt.Println(pinStr)
 			pins := strings.Split(pinStr, ";")
-			log.Printf("%#v\n", pins)
 			for _, pinstr := range pins {
 				pinx := regexp.MustCompile(`\(([0-9]+),([0-9]+),([\+\-/\*])([0-9]+),([0-9]*),([a-zA-Z0-9]*)\)`)
 				pins := pinx.FindStringSubmatch(pinstr)
@@ -146,12 +146,32 @@ func (ud *UserDefine) ParseLine(b *SchBlock, desc string) SvgBlock {
 					cur.Pins = append(cur.Pins, pt)
 				}
 			}
-
 			desc = desc[pos+1:]
+			continue
 		}
-		return cur
+		// Label(3,3)
+		labelx := regexp.MustCompile(`^Label\(([0-9]+),([0-9]+)\)`)
+		labels := labelx.FindStringSubmatch(desc)
+		if len(labels) > 1 {
+			cur.Lable.X, _ = strconv.Atoi(labels[1])
+			cur.Lable.Y, _ = strconv.Atoi(labels[2])
+			desc = desc[len(labels[0]):]
+			continue
+		}
+		// Value(5,3)
+		valuex := regexp.MustCompile(`^Value\(([0-9]+),([0-9]+)\)`)
+		values := valuex.FindStringSubmatch(desc)
+		if len(values) > 1 {
+			cur.Value.X, _ = strconv.Atoi(values[1])
+			cur.Value.Y, _ = strconv.Atoi(values[2])
+			desc = desc[len(values[0]):]
+			continue
+		}
+		break
 	}
-	return nil
+
+	return cur
+
 }
 
 // ToSvg 生成svg
@@ -159,7 +179,7 @@ func (ud *UserDefine) ToSvg(canvas *svg.SVG, w io.Writer) {
 }
 
 // LayoutSvg 生成svg
-func (ud *UserDefine) LayoutSvg(canvas *svg.SVG, w io.Writer, offsetX, offsetY int) {
+func (ud *UserDefine) LayoutSvg(canvas *svg.SVG, w io.Writer, offsetX, offsetY int, label string, val string) {
 	if len(ud.Points) > 0 {
 		str := "M" + strconv.Itoa((ud.Points[0].X+offsetX)*div) + " " + strconv.Itoa((ud.Points[0].Y+offsetY)*div)
 		for i := 1; i < len(ud.Points); i++ {
@@ -173,7 +193,7 @@ func (ud *UserDefine) LayoutSvg(canvas *svg.SVG, w io.Writer, offsetX, offsetY i
 		canvas.Circle((ud.Cir.x1+offsetX)*div, (ud.Cir.y1+offsetY)*div, ud.Cir.d*div/2, `style="fill:#cdcdcf;stroke:#737375;stroke-width:1pt;"`)
 	}
 	for _, vline := range ud.Lines {
-		canvas.Line((vline.Start.X+offsetX)*div, (vline.Start.Y+offsetY)*div, (vline.End.X+offsetX)*div, (vline.End.Y+offsetY)*div, "stroke:#737375;")
+		canvas.Line(vline.Start.X*div/3+offsetX*div, vline.Start.Y*div/3+offsetY*div, vline.End.X*div/3+offsetX*div, vline.End.Y*div/3+offsetY*div, "stroke:#737375;")
 	}
 	for _, pt := range ud.Pins {
 		canvas.Circle((pt.X+offsetX)*div, (pt.Y+offsetY)*div, 2, "fill:#e0e0e2;stroke:#737375;")
@@ -208,7 +228,12 @@ func (ud *UserDefine) LayoutSvg(canvas *svg.SVG, w io.Writer, offsetX, offsetY i
 		}
 		canvas.Text(txtX, txtY, pt.PinName, "font-size:"+strconv.Itoa(div)+"px;"+ex, strrot)
 	}
-
+	if label != "" {
+		canvas.Text((ud.Lable.X+offsetX)*div, (ud.Lable.Y+offsetY)*div, label, "text-anchor: middle;")
+	}
+	if val != "" {
+		canvas.Text((ud.Value.X+offsetX)*div, (ud.Value.Y+offsetY)*div, label, "text-anchor: middle;")
+	}
 }
 
 // GetIdxName 获取元件名
@@ -218,8 +243,10 @@ func (ud *UserDefine) GetIdxName() string {
 
 // GetPin 获取引脚位置
 func (ud *UserDefine) GetPin(i int) (x int, y int) {
-	if len(ud.Pins) <= i {
-		return ud.Pins[i-1].X, ud.Pins[i-1].Y
+	for _, pin := range ud.Pins {
+		if pin.PinIdx == i {
+			return pin.X, pin.Y
+		}
 	}
 	return 0, 0
 }

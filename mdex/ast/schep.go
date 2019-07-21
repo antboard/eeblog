@@ -76,7 +76,7 @@ func (epb *EpBlock) ParseLine(b *SchBlock, desc string) SvgBlock {
 // ToSvg 生成svg
 func (epb *EpBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 	// 基于当前位置,进行相关画图
-	epb.Ud.LayoutSvg(canvas, w, epb.X, epb.Y)
+	epb.Ud.LayoutSvg(canvas, w, epb.X, epb.Y, epb.Index, "")
 }
 
 // GetIdxName 获取元件名
