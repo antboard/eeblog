@@ -40,13 +40,11 @@ type pinCfg struct {
 
 // UserDefine 自定义模块
 type UserDefine struct {
-	Index   string
-	Points  []*point
-	Cir     *cir
-	Lines   []*line
-	Pins    []*pinCfg
-	Texts   []string
-	PinNums []int
+	Index  string
+	Points []*point
+	Cir    *cir
+	Lines  []*line
+	Pins   []*pinCfg
 }
 
 // CanParse 类型检查
@@ -218,8 +216,10 @@ func (ud *UserDefine) GetIdxName() string {
 
 // GetPin 获取引脚位置
 func (ud *UserDefine) GetPin(i int) (x int, y int) {
-	if len(ud.Pins) <= i {
-		return ud.Pins[i-1].X, ud.Pins[i-1].Y
+	for _, pin := range ud.Pins {
+		if pin.PinIdx == i {
+			return pin.X, pin.Y
+		}
 	}
 	return 0, 0
 }
