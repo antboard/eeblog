@@ -27,8 +27,8 @@ func NewSchParser() parser.BlockParser {
 }
 
 func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context) (ast.Node, parser.State) {
-	log.Println("1")
 	line, _ := reader.PeekLine()
+	log.Println("1:", string(line))
 	// 判断$前缀标记
 	pos := pc.BlockOffset()
 	if line[pos] != '$' {
@@ -43,14 +43,16 @@ func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context)
 }
 
 func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Context) parser.State {
-	log.Println("2")
 	line, _ := reader.PeekLine()
+	log.Println("2:", string(line))
 	if util.IsBlank(line) {
 		return parser.Continue | parser.NoChildren
 	}
 	// 如果 是结束符就返回close
 	if line[0] == '$' {
-		return parser.Close | parser.Continue | parser.NoChildren
+		log.Println("end")
+		reader.Advance(1)
+		return parser.Close | parser.NoChildren
 	}
 	cur, ok := node.(*last.SchBlock)
 	if !ok {
@@ -61,7 +63,7 @@ func (b *schParser) Continue(node ast.Node, reader text.Reader, pc parser.Contex
 
 	// log.Printf("%#v", string(line))
 	cur.AddLine(string(line))
-	// reader.Advance(segment.Len() - 1)
+	// reader.Advance(len(line))
 	return parser.Continue | parser.NoChildren
 }
 
