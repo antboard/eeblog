@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/sessions"
+	"github.com/gin-contrib/sessions"
 	"github.com/spf13/viper"
 
 	"github.com/antboard/eeblog/mdex"
@@ -49,13 +49,6 @@ type MainPage struct {
 	BlogCtx     template.HTML // 博文内容
 }
 
-var store *sessions.CookieStore
-
-func init() {
-	// cookie加密秘钥
-	store = sessions.NewCookieStore([]byte("eeblog-antboard-secret"))
-}
-
 // Index ...
 func Index(c *gin.Context) {
 	vbs := model.GetOnlineBlog(0)
@@ -86,15 +79,13 @@ func Index(c *gin.Context) {
 
 // Login ...
 func Login(c *gin.Context) {
-	session, err := store.Get(c.Request, "user-sess")
-	if err == nil {
-		user, ok := session.Values["user"]
-		log.Println(user, ok)
-		name := viper.Get("name").(string)
-		if ok && (user == name) {
-			c.Redirect(http.StatusFound, "/backend/")
-			return
-		}
+	session := sessions.Default(c)
+	user, ok := session.Get("user").(string)
+	log.Println(user, ok)
+	name := viper.Get("name").(string)
+	if ok && (user == name) {
+		c.Redirect(http.StatusFound, "/backend/")
+		return
 	}
 
 	c.HTML(http.StatusOK, "login.tmpl", nil)
@@ -113,13 +104,10 @@ func Plogin(c *gin.Context) {
 	if (name == viper.Get("name")) &&
 		(pwd == viper.Get("password")) {
 		//   设置cookies, 转型正常后台
-		session, err := store.Get(c.Request, "user-sess")
-		if err == nil {
-			session.Values["user"] = name
-			session.Save(c.Request, c.Writer)
-			// post 不能重定向. 需要让前端重定向
-			c.JSON(http.StatusOK, gin.H{"url": "/backend/"})
-		}
+		session := sessions.Default(c)
+		session.Set("user", name)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{"url": "/backend/"})
 
 	}
 	c.String(http.StatusOK, "")
