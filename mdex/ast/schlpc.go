@@ -86,7 +86,7 @@ func (cb *CBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 			canvas.Arc((cb.X+2)*div, cb.Y*div-div, div, div, div, false, false, (cb.X+2)*div, cb.Y*div+div, "stroke:#737375;fill:#cdcdcf;")
 		}
 		// 编号
-		canvas.Text((cb.X+1)*div, cb.Y*div-div/2*3, "R"+cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
+		canvas.Text((cb.X+1)*div, cb.Y*div-div/2*3, "C"+cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 		// 阻值
 		canvas.Text((cb.X+1)*div, cb.Y*div+div*2, cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 	} else {
@@ -102,7 +102,7 @@ func (cb *CBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 			canvas.Arc((cb.X-1)*div, (cb.Y+2)*div, div, div, div, true, true, (cb.X+1)*div, (cb.Y+2)*div, "stroke:#737375;fill:#cdcdcf;")
 		}
 		// 编号
-		canvas.Text((cb.X)*div+div/2*3, (cb.Y+1)*div+div/2, "R"+cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
+		canvas.Text((cb.X)*div+div/2*3, (cb.Y+1)*div+div/2, "C"+cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 		// 阻值
 		canvas.Text((cb.X)*div+div/2*3, (cb.Y+2)*div+div/2, cb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 

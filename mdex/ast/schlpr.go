@@ -80,7 +80,7 @@ func (rb *RBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 		// 编号
 		canvas.Text((rb.X+1)*div, rb.Y*div-div, "R"+rb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 		// 阻值
-		canvas.Text((rb.X+1)*div, rb.Y*div+div/2*3, rb.Index, "font-size:"+strconv.Itoa(div)+"px;")
+		canvas.Text((rb.X+1)*div, rb.Y*div+div/2*3, rb.Value, "font-size:"+strconv.Itoa(div)+"px;")
 	} else {
 		// 1号腿
 		canvas.Line(rb.X*div, rb.Y*div, (rb.X)*div, (rb.Y+1)*div, "stroke:#737375;")
@@ -91,7 +91,7 @@ func (rb *RBlock) ToSvg(canvas *svg.SVG, w io.Writer) {
 		// 编号
 		canvas.Text((rb.X)*div+div, (rb.Y+2)*div, "R"+rb.Index, "font-size:"+strconv.Itoa(div)+"px;")
 		// 阻值
-		canvas.Text((rb.X)*div+div, (rb.Y+3)*div, rb.Index, "font-size:"+strconv.Itoa(div)+"px;")
+		canvas.Text((rb.X)*div+div, (rb.Y+3)*div, rb.Value, "font-size:"+strconv.Itoa(div)+"px;")
 
 	}
 }
