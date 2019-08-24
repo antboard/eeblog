@@ -49,6 +49,19 @@ type MainPage struct {
 	BlogCtx     template.HTML // 博文内容
 }
 
+// CheckLogin 登录确认中间件
+func CheckLogin(c *gin.Context) {
+	session := sessions.Default(c)
+	user, ok := session.Get("user").(string)
+	name := viper.Get("name").(string)
+	if ok && (user == name) {
+		c.Next()
+	} else {
+		c.Redirect(http.StatusFound, "/")
+		c.Abort()
+	}
+}
+
 // Index ...
 func Index(c *gin.Context) {
 	vbs := model.GetOnlineBlog(0)

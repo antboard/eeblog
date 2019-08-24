@@ -40,13 +40,13 @@ func main() {
 	r.GET("/", handle.Index)
 	r.GET("/myblog/", handle.Login)
 	r.POST("/myblog/", handle.Plogin)
-	r.GET("/backend/", handle.Backend)
-	r.GET("/new/*id", handle.NewBlog)
-	r.GET("/eeblog/:id", handle.Blog)   // 查看博客
-	r.GET("/draft/:id", handle.Draft)   // 状态草稿
-	r.GET("/online/:id", handle.Online) // 状态上线
-	r.GET("/edit/:id", handle.Edit)     // 编辑博文
-	r.POST("/edit/:id", handle.PEdit)   // 编辑博文
+	r.GET("/backend/", handle.CheckLogin, handle.Backend)
+	r.GET("/new/*id", handle.CheckLogin, handle.NewBlog)
+	r.GET("/eeblog/:id", handle.Blog)                      // 查看博客
+	r.GET("/draft/:id", handle.CheckLogin, handle.Draft)   // 状态草稿
+	r.GET("/online/:id", handle.CheckLogin, handle.Online) // 状态上线
+	r.GET("/edit/:id", handle.CheckLogin, handle.Edit)     // 编辑博文
+	r.POST("/edit/:id", handle.CheckLogin, handle.PEdit)   // 编辑博文
 
 	r.GET("/dumy", handle.DumyBlog)
 
