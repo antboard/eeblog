@@ -28,7 +28,7 @@ func NewSchParser() parser.BlockParser {
 
 func (b *schParser) Open(parent ast.Node, reader text.Reader, pc parser.Context) (ast.Node, parser.State) {
 	line, _ := reader.PeekLine()
-	log.Println("1:", string(line))
+	// log.Println("1:", string(line))
 	// 判断$前缀标记
 	pos := pc.BlockOffset()
 	if line[pos] != '$' {
