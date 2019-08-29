@@ -21,8 +21,8 @@ func init() {
 // 1: 高电平
 // 2,4,6,8: 2x,4x,6x,8x
 type Square struct {
-	X, Y, C int
-	Cfg     string
+	X, Y, C   int
+	Cfg, Name string
 }
 
 // CreateSquare ...
@@ -45,16 +45,17 @@ func (s *Square) CanParse(desc string) bool {
 // ParseLine 解析行
 func (s *Square) ParseLine(b *WaveBlock, desc string) SvgBlock {
 	// SQ 方波
-	nx := regexp.MustCompile(`^[\s]*SQ\(([0-9]+),([0-9]+),([0-9]+)\)-`)
+	nx := regexp.MustCompile(`^[\s]*SQ([a-zA-z0-9]+)\(([0-9]+),([0-9]+),([0-9]+)\)-`)
 	n := nx.FindStringSubmatch(desc)
 	if len(n) > 0 {
 		// 方波正确就可以切到前缀
 		prelen := len(n[0])
 		desc = desc[prelen:]
 		cur := CreateSquare()
-		cur.X, _ = strconv.Atoi(n[1])
-		cur.Y, _ = strconv.Atoi(n[2])
-		cur.C, _ = strconv.Atoi(n[3])
+		cur.Name = n[1]
+		cur.X, _ = strconv.Atoi(n[2])
+		cur.Y, _ = strconv.Atoi(n[3])
+		cur.C, _ = strconv.Atoi(n[4])
 		cur.Cfg = strings.TrimSuffix(desc, "\n")
 		log.Printf("%#v\n", cur)
 		return cur
@@ -68,6 +69,7 @@ func (s *Square) ToSvg(canvas *svg.SVG, w io.Writer) {
 	Y := 0
 	hi := div * 3
 	lastplus := false
+	canvas.Text(s.X*div, s.Y*div, s.Name)
 	for idx := 0; idx < len(s.Cfg); idx++ {
 		c := s.Cfg[idx] - '0'
 		plus := false
