@@ -29,7 +29,7 @@ func (w *waveParser) Open(parent ast.Node, reader text.Reader, pc parser.Context
 	line, _ := reader.PeekLine()
 	log.Println("w1:", string(line))
 	// pos := pc.BlockOffset()
-	if strings.HasPrefix(string(line), "~$") {
+	if !strings.HasPrefix(string(line), "~$") {
 		return nil, parser.NoChildren
 	}
 
