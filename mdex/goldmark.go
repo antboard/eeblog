@@ -6,7 +6,7 @@ import (
 
 // MD 初始化全局渲染器
 var MD = goldmark.New(
-	goldmark.WithExtensions(SchExt),
+	goldmark.WithExtensions(SchExt, WaveExt),
 	// goldmark.WithParserOptions(
 	// 	parser.WithAutoHeadingID(),
 	// ),
