@@ -69,7 +69,7 @@ func (s *Square) ToSvg(canvas *svg.SVG, w io.Writer) {
 	Y := 0
 	hi := div * 3
 	lastplus := false
-	canvas.Text(s.X*div, s.Y*div, s.Name)
+	canvas.Text(s.X*div, s.Y*div+24, s.Name, `opacity=".3" font-size=24px`)
 	for idx := 0; idx < len(s.Cfg); idx++ {
 		c := s.Cfg[idx] - '0'
 		plus := false
