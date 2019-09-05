@@ -45,8 +45,9 @@ func (w *WaveBlock) Kind() gast.NodeKind {
 // InitByLine 初始化画布
 func (w *WaveBlock) InitByLine(desc string) {
 	// 读取画布大小
-	pageszre := regexp.MustCompile(`~$\(([0-9]+),([0-9]+)\)`)
+	pageszre := regexp.MustCompile(`~\$\(([0-9]+),([0-9]+)\)`)
 	pagesz := pageszre.FindStringSubmatch(desc)
+	log.Println(desc, pagesz)
 	if len(pagesz) == 3 {
 		w.PageW, _ = strconv.Atoi(pagesz[1])
 		w.PageH, _ = strconv.Atoi(pagesz[2])
